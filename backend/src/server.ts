@@ -183,8 +183,16 @@ async function startServer() {
   app.use(errorHandler);
 
   // ──────────────────────────────────────────────
-  // Frontend Serving (Vite dev / Static prod)
+  // Frontend Serving / Health Checks
   // ──────────────────────────────────────────────
+
+  // Render HTTP health check interceptor
+  app.get('/', (_req, res) => {
+    res.status(200).send('CropFit API is running successfully on Render!');
+  });
+  app.get('/api/health', (_req, res) => {
+    res.status(200).json({ status: 'ok' });
+  });
 
   if (process.env.NODE_ENV !== "production") {
     try {
@@ -201,7 +209,7 @@ async function startServer() {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (_req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
+      res.status(404).send("API Route Not Found");
     });
   }
 
