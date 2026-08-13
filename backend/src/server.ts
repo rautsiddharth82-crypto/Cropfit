@@ -209,7 +209,7 @@ async function startServer() {
   // Start Server
   // ──────────────────────────────────────────────
   
-  app.listen(PORT, () => {
+  app.listen(PORT, "0.0.0.0", () => {
     console.log(`\n🌾 ═══════════════════════════════════════════════════`);
     console.log(`🌾  CropFit Backend Server v2.0`);
     console.log(`🌾  Running on PORT ${PORT}`);
