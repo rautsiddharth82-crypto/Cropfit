@@ -33,10 +33,8 @@ import { connectDB } from "./services/database/connection";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 
 async function startServer() {
-  await connectDB();
-  
   const app = express();
-  const PORT = Number(process.env.PORT) || 3000;
+  const PORT = process.env.PORT || 3000;
 
   // ──────────────────────────────────────────────
   // Middleware
@@ -210,17 +208,20 @@ async function startServer() {
   // ──────────────────────────────────────────────
   // Start Server
   // ──────────────────────────────────────────────
-
-  app.listen(PORT, "0.0.0.0", () => {
+  
+  app.listen(PORT, () => {
     console.log(`\n🌾 ═══════════════════════════════════════════════════`);
     console.log(`🌾  CropFit Backend Server v2.0`);
-    console.log(`🌾  Running on http://0.0.0.0:${PORT}`);
+    console.log(`🌾  Running on PORT ${PORT}`);
     console.log(`🌾  API Discovery: http://localhost:${PORT}/api`);
     console.log(`🌾  Health Check:  http://localhost:${PORT}/api/health`);
     console.log(`🌾 ═══════════════════════════════════════════════════`);
     console.log(`📡 APIs: Meteoblue ${process.env.METEOBLUE_API_KEY ? '✅' : '⚠️ simulated'} | CE Hub ${process.env.CEHUB_API_KEY ? '✅' : '⚠️ simulated'} | Gemini ${process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'MY_GEMINI_API_KEY' ? '✅' : '⚠️ fallback'}`);
     console.log(`\n`);
   });
+
+  // Connect to DB asynchronously (doesn't block port binding)
+  connectDB().catch(err => console.error("MongoDB Connection Error:", err));
 }
 
 startServer();
