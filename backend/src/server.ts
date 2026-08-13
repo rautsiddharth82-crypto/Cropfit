@@ -36,7 +36,7 @@ async function startServer() {
   await connectDB();
   
   const app = express();
-  const PORT = process.env.PORT || 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   // ──────────────────────────────────────────────
   // Middleware
@@ -211,7 +211,7 @@ async function startServer() {
   // Start Server
   // ──────────────────────────────────────────────
 
-  app.listen(PORT, "0.0.0.0", () => {
+  app.listen(PORT, () => {
     console.log(`\n🌾 ═══════════════════════════════════════════════════`);
     console.log(`🌾  CropFit Backend Server v2.0`);
     console.log(`🌾  Running on http://0.0.0.0:${PORT}`);
