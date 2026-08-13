@@ -1,0 +1,6 @@
+{
+  "name": "Climate Smart Farming Assistant",
+  "description": "AI-powered climate smart farming assistant for crop monitoring, weather tracking, 3D field views, and early climate stress warnings.",
+  "requestFramePermissions": ["microphone", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
