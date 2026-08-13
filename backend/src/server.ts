@@ -176,13 +176,6 @@ async function startServer() {
   });
 
   // ──────────────────────────────────────────────
-  // Error Handling
-  // ──────────────────────────────────────────────
-
-  app.use(notFoundHandler);
-  app.use(errorHandler);
-
-  // ──────────────────────────────────────────────
   // Frontend Serving / Health Checks
   // ──────────────────────────────────────────────
 
@@ -212,6 +205,13 @@ async function startServer() {
       res.status(404).send("API Route Not Found");
     });
   }
+
+  // ──────────────────────────────────────────────
+  // Error Handling (Must be last)
+  // ──────────────────────────────────────────────
+  
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   // ──────────────────────────────────────────────
   // Start Server
