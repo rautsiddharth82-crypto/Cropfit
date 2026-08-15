@@ -12,9 +12,9 @@ async function startServer() {
 
   app.use(express.json());
 
-  // Proxy /api requests to the local backend on port 3000
+  // Proxy /api requests to the Render backend
   app.all("/api/*", async (req, res) => {
-    const targetUrl = `http://localhost:3000${req.originalUrl}`;
+    const targetUrl = `https://cropfit-werx.onrender.com${req.originalUrl}`;
     try {
       const headers: Record<string, string> = {};
       for (const [key, value] of Object.entries(req.headers)) {
@@ -22,6 +22,8 @@ async function startServer() {
           headers[key] = Array.isArray(value) ? value.join(", ") : value;
         }
       }
+      delete headers["host"];
+      delete headers["connection"];
 
       const options: RequestInit = {
         method: req.method,
@@ -35,7 +37,10 @@ async function startServer() {
       const response = await fetch(targetUrl, options);
       
       response.headers.forEach((value, key) => {
-        res.setHeader(key, value);
+        const lowerKey = key.toLowerCase();
+        if (lowerKey !== "content-encoding" && lowerKey !== "content-length" && lowerKey !== "transfer-encoding") {
+          res.setHeader(key, value);
+        }
       });
 
       res.status(response.status);
