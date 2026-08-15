@@ -675,126 +675,162 @@ export const NutriBlendView: React.FC = () => {
         </button>
       </div>
 
-      {/* 7. CUSTOM BLENDER MODAL */}
+      {/* 7. CUSTOM BLENDER MODAL — PRECISION ENGINE */}
       {isBlenderOpen && (
-        <div className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl w-full max-w-lg space-y-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                <Sliders className="w-5 h-5 text-emerald-600" />
-                <span>Custom NPK Blender</span>
-              </h3>
+        <div className="fixed inset-0 bg-slate-950/70 z-50 flex items-center justify-center p-3 sm:p-5 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto flex flex-col">
+
+            {/* Dark Green Header */}
+            <div className="bg-[#1a3326] rounded-t-3xl px-6 py-5 flex items-start justify-between shrink-0">
+              <div>
+                <p className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-0.5">NUTRIBLEND™ PRECISION ENGINE</p>
+                <h3 className="text-white text-lg font-black leading-tight">Custom Nutrient Blender &amp; Ratios</h3>
+              </div>
               <button
                 type="button"
-                onClick={() => {
-                  setIsBlenderOpen(false);
-                  setCustomBlenderSaved(false);
-                }}
-                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 font-bold cursor-pointer"
+                onClick={() => { setIsBlenderOpen(false); setCustomBlenderSaved(false); }}
+                className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white font-black text-base transition-all cursor-pointer shrink-0 ml-3 mt-0.5"
               >
                 ✕
               </button>
             </div>
 
-            <p className="text-xs text-slate-505 font-medium leading-relaxed">
-              Drag the sliders below to customize your NPK nutrient ratios. The tool will calculate the percentage of organic bio-fertilizer and suggest helper adjustments.
-            </p>
+            {/* Scrollable Body */}
+            <div className="p-5 space-y-5">
 
-            <div className="space-y-4">
-              {/* Nitrogen */}
-              <div className="space-y-1">
-                <div className="flex justify-between text-xs font-bold text-slate-700">
-                  <span>Nitrogen (N)</span>
-                  <span className="text-emerald-700 font-black">{blenderN}%</span>
+              {/* Organic / Chemical Slider */}
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                <div className="flex items-center justify-between text-xs font-black">
+                  <span className="text-emerald-700 flex items-center gap-1">🍃 Organic Share: <span className="text-emerald-800">{blenderN}%</span></span>
+                  <span className="text-blue-700">Chemical Share: {100 - blenderN}%</span>
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={blenderN}
-                  onChange={(e) => setBlenderN(parseInt(e.target.value))}
-                  className="w-full accent-emerald-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg"
-                />
+
+                {/* Gradient track slider */}
+                <div className="relative">
+                  <div className="w-full h-3 rounded-full" style={{ background: `linear-gradient(to right, #16a34a ${blenderN}%, #93c5fd ${blenderN}%)` }} />
+                  <input
+                    type="range"
+                    min="10"
+                    max="90"
+                    value={blenderN}
+                    onChange={(e) => setBlenderN(parseInt(e.target.value))}
+                    className="absolute inset-0 w-full h-3 opacity-0 cursor-pointer"
+                    style={{ zIndex: 2 }}
+                  />
+                  {/* Custom thumb */}
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-emerald-700 border-2 border-white shadow-lg pointer-events-none transition-all"
+                    style={{ left: `calc(${((blenderN - 10) / 80) * 100}% - 10px)`, zIndex: 3 }}
+                  />
+                </div>
+
+                <div className="flex justify-between text-[10px] font-bold text-slate-500">
+                  <span>10% Low Organic</span>
+                  <span className="text-emerald-700 font-black flex items-center gap-1">
+                    40% Balanced (Recommended <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />)
+                  </span>
+                  <span>90% Pure Organic</span>
+                </div>
               </div>
 
-              {/* Phosphorus */}
-              <div className="space-y-1">
-                <div className="flex justify-between text-xs font-bold text-slate-700">
-                  <span>Phosphorus (P)</span>
-                  <span className="text-emerald-700 font-black">{blenderP}%</span>
+              {/* Dosage Cards Section */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-[11px] font-black text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                    ⚖️ CALCULATED INGREDIENT DOSAGES ({acresInput} ACRES):
+                  </h4>
+                  <span className="text-xs font-black bg-amber-50 text-amber-800 border border-amber-200 px-3 py-1 rounded-full">
+                    🪙 Saves ₹{(selectedCrop.savesPerAcre * acresInput).toLocaleString('en-IN')}
+                  </span>
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={blenderP}
-                  onChange={(e) => setBlenderP(parseInt(e.target.value))}
-                  className="w-full accent-emerald-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg"
-                />
+
+                <div className="grid grid-cols-2 gap-3">
+                  {/* FYM / Desi Compost */}
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 space-y-1.5">
+                    <p className="text-[10px] font-black text-emerald-800 uppercase tracking-wide">FYM / DESI COMPOST</p>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-black text-emerald-700">{(blenderN / 100 * acresInput * 1.6).toFixed(1)}</span>
+                      <span className="text-xs font-black text-emerald-600">Tons</span>
+                    </div>
+                    <p className="text-[11px] text-emerald-700 font-semibold">Pre-ploughing basal</p>
+                  </div>
+
+                  {/* Bio-Fertilizer */}
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 space-y-1.5">
+                    <p className="text-[10px] font-black text-emerald-800 uppercase tracking-wide">BIO-FERTILIZER (PSB)</p>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-black text-emerald-700">{(blenderN / 100 * acresInput * 2.5).toFixed(1)}</span>
+                      <span className="text-xs font-black text-emerald-600">kg</span>
+                    </div>
+                    <p className="text-[11px] text-emerald-700 font-semibold">Seed / soil booster</p>
+                  </div>
+
+                  {/* Neem-Coated Urea */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 space-y-1.5">
+                    <p className="text-[10px] font-black text-blue-800 uppercase tracking-wide">NEEM-COATED UREA</p>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-black text-blue-700">{((100 - blenderN) / 100 * acresInput * 1.33).toFixed(1)}</span>
+                      <span className="text-xs font-black text-blue-600">Bags</span>
+                    </div>
+                    <p className="text-[11px] text-blue-700 font-semibold">Split into 2 doses</p>
+                  </div>
+
+                  {/* DAP / SSP */}
+                  <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-1.5">
+                    <p className="text-[10px] font-black text-amber-800 uppercase tracking-wide">DAP / SSP</p>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-2xl font-black text-amber-700">{((100 - blenderN) / 100 * acresInput * 0.725).toFixed(1)}</span>
+                      <span className="text-xs font-black text-amber-600">Bags</span>
+                    </div>
+                    <p className="text-[11px] text-amber-700 font-semibold">Basal root starter</p>
+                  </div>
+                </div>
               </div>
 
-              {/* Potassium */}
-              <div className="space-y-1">
-                <div className="flex justify-between text-xs font-bold text-slate-700">
-                  <span>Potassium (K)</span>
-                  <span className="text-emerald-700 font-black">{blenderK}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={blenderK}
-                  onChange={(e) => setBlenderK(parseInt(e.target.value))}
-                  className="w-full accent-emerald-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg"
-                />
+              {/* Scientific Blend Note */}
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-1.5">
+                <p className="text-xs font-black text-slate-700 flex items-center gap-1.5">
+                  ⚗️ Scientific Blend Formulation:
+                </p>
+                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                  {blenderN >= 40
+                    ? 'Combining organic compost with neem-coated urea slows down nitrogen volatilization by up to 35%, ensuring gradual root feeding during the critical 15-day tillering period.'
+                    : 'High chemical share delivers faster nutrient uptake but may risk leaf burn. Consider increasing organic ratio to ≥40% for long-term soil health and balanced NPK release.'}
+                </p>
               </div>
+
+              {/* Agronomic Safety Alert */}
+              {blenderN > 70 && (
+                <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 flex items-start gap-2">
+                  <span className="text-amber-600 text-sm">⚠️</span>
+                  <p className="text-xs text-amber-800 font-bold leading-relaxed">Very high organic ratio may slow nitrogen availability in cold soils. Ensure soil temperature is above 18°C before application.</p>
+                </div>
+              )}
+
             </div>
 
-            {/* Calculations display */}
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-              <div className="flex justify-between text-xs font-bold text-slate-655">
-                <span>Total Active Nutrients:</span>
-                <span className="text-slate-800 font-black">{blenderN + blenderP + blenderK}%</span>
-              </div>
-              <div className="flex justify-between text-xs font-bold text-slate-655">
-                <span>Calculated Organic Bio-NPK ratio:</span>
-                <span className="text-emerald-700 font-black">62% (Bio) / 38% (Chemical)</span>
-              </div>
-              <div className="flex justify-between text-xs font-black text-slate-900 border-t border-slate-200 pt-2">
-                <span>Agronomic Advice:</span>
-                <span className="text-amber-700 text-xs font-bold">
-                  {blenderN > 50 ? 'Excessive N! Reduce to avoid leaf burn.' : 'Safe and balanced mix.'}
-                </span>
-              </div>
-            </div>
-
-            {/* Action Bar */}
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+            {/* Footer Buttons */}
+            <div className="px-5 pb-5 pt-2 flex items-center gap-3 border-t border-slate-100 shrink-0">
               <button
                 type="button"
-                onClick={() => {
-                  setIsBlenderOpen(false);
-                  setCustomBlenderSaved(false);
-                }}
-                className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-55 cursor-pointer"
+                onClick={() => { setIsBlenderOpen(false); setCustomBlenderSaved(false); }}
+                className="flex-1 py-3 border border-slate-200 rounded-2xl text-xs font-black text-slate-600 hover:bg-slate-50 cursor-pointer transition-all"
               >
-                Cancel
+                Close
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setCustomBlenderSaved(true);
-                  setTimeout(() => {
-                    setIsBlenderOpen(false);
-                    setCustomBlenderSaved(false);
-                  }, 1200);
+                  setTimeout(() => { setIsBlenderOpen(false); setCustomBlenderSaved(false); }, 1300);
                 }}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-705 text-white rounded-xl text-xs font-black cursor-pointer shadow-md flex items-center gap-1.5"
+                className="flex-1 py-3 bg-[#1a3326] hover:bg-emerald-900 text-white rounded-2xl text-xs font-black cursor-pointer shadow-md flex items-center justify-center gap-2 transition-all"
               >
-                {customBlenderSaved ? <Check className="w-3.5 h-3.5" /> : null}
-                <span>{customBlenderSaved ? 'Recipe Saved!' : 'Save Recipe'}</span>
+                {customBlenderSaved ? <Check className="w-3.5 h-3.5" /> : <Sliders className="w-3.5 h-3.5" />}
+                <span>{customBlenderSaved ? '✓ Recipe Saved!' : 'Save Recipe'}</span>
               </button>
             </div>
+
           </div>
         </div>
       )}
