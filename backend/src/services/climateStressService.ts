@@ -39,8 +39,8 @@ export class ClimateStressService {
     crop: SupportedCrop,
     daysSinceSowing: number,
     soilMoisturePercent: number,
-    lat = DEFAULT_LOCATION.lat,
-    lon = DEFAULT_LOCATION.lon
+    lat: number = DEFAULT_LOCATION.lat,
+    lon: number = DEFAULT_LOCATION.lon
   ): Promise<CompositeStressResult> {
     const month = new Date().getMonth() + 1;
 
@@ -119,8 +119,8 @@ export class ClimateStressService {
     crop: SupportedCrop,
     daysSinceSowing: number,
     soilMoisturePercent: number,
-    lat = DEFAULT_LOCATION.lat,
-    lon = DEFAULT_LOCATION.lon
+    lat: number = DEFAULT_LOCATION.lat,
+    lon: number = DEFAULT_LOCATION.lon
   ): Promise<HeatStressResult[]> {
     const weather = await this.weatherService.getFieldWeather(lat, lon);
     const dailyMaxTemps = weather.forecast.map(d => d.tempMaxC);

@@ -15,7 +15,7 @@ export class WeatherService {
   /**
    * Get unified current + forecast weather for a field.
    */
-  async getFieldWeather(lat = DEFAULT_LOCATION.lat, lon = DEFAULT_LOCATION.lon) {
+  async getFieldWeather(lat: number = DEFAULT_LOCATION.lat, lon: number = DEFAULT_LOCATION.lon) {
     const [forecast, anomaly] = await Promise.all([
       this.cehub.getForecast(lat, lon, 7),
       this.meteoblue.calculateAnomaly(lat, lon, 32, 2, new Date().getMonth() + 1),

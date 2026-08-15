@@ -54,15 +54,15 @@ const CropPassportSchema = new Schema<ICropPassport>({
   revenueINR: { type: Number },
   profitINR: { type: Number },
   
-  irrigationEvents: { type: [Schema.Types.Mixed], default: [] },
-  inputApplications: { type: [Schema.Types.Mixed], default: [] },
-  weatherSnapshots: { type: [Schema.Types.Mixed], default: [] },
-  cropPhotos: { type: [Schema.Types.Mixed], default: [] },
-  pestDiseaseEvents: { type: [Schema.Types.Mixed], default: [] },
-  aiRecommendations: { type: [Schema.Types.Mixed], default: [] },
-  treatmentOutcomes: { type: [Schema.Types.Mixed], default: [] },
-  costs: { type: [Schema.Types.Mixed], default: [] },
-  alerts: { type: [Schema.Types.Mixed], default: [] },
+  irrigationEvents: [Schema.Types.Mixed],
+  inputApplications: [Schema.Types.Mixed],
+  weatherSnapshots: [Schema.Types.Mixed],
+  cropPhotos: [Schema.Types.Mixed],
+  pestDiseaseEvents: [Schema.Types.Mixed],
+  aiRecommendations: [Schema.Types.Mixed],
+  treatmentOutcomes: [Schema.Types.Mixed],
+  costs: [Schema.Types.Mixed],
+  alerts: [Schema.Types.Mixed],
 }, { timestamps: true });
 
 export const CropPassport = mongoose.models.CropPassport || mongoose.model<ICropPassport>('CropPassport', CropPassportSchema);
