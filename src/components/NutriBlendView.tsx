@@ -23,7 +23,11 @@ import {
   ChevronDown,
   ChevronUp,
   Activity,
-  Bot
+  Bot,
+  AlertTriangle,
+  X,
+  TrendingUp,
+  Coins
 } from 'lucide-react';
 
 interface CropOption {
@@ -169,11 +173,23 @@ export const NutriBlendView: React.FC = () => {
   const [blenderK, setBlenderK] = useState<number>(20);
   const [customBlenderSaved, setCustomBlenderSaved] = useState<boolean>(false);
 
+  // Modal display states
+  const [whyModalContent, setWhyModalContent] = useState<string | null>(null);
+  const [showOptionsModal, setShowOptionsModal] = useState<boolean>(false);
+  const [showHistoryModal, setShowHistoryModal] = useState<boolean>(false);
+  const [showAnalysisModal, setShowAnalysisModal] = useState<boolean>(false);
+  const [showCostModal, setShowCostModal] = useState<boolean>(false);
+
+  // Local active alternative blends
+  const [customBlends, setCustomBlends] = useState<Record<string, { title: string; desc: string }>>({});
+
   const selectedCrop = CROP_OPTIONS.find(c => c.id === selectedCropId) || CROP_OPTIONS[0];
+
+  const displayTitle = customBlends[selectedCropId]?.title || selectedCrop.whatToApply.title;
+  const displayDesc = customBlends[selectedCropId]?.desc || selectedCrop.whatToApply.desc;
 
   // Dynamic calculations based on acres
   const totalAmount = selectedCrop.howMuchPerAcre * acresInput;
-  const totalWater = 150 * acresInput;
   const totalCost = selectedCrop.costPerAcre * acresInput;
   const totalSavings = selectedCrop.savesPerAcre * acresInput;
 
@@ -194,6 +210,31 @@ export const NutriBlendView: React.FC = () => {
     speak(prompt);
   };
 
+  const handleSelectAlternative = (title: string, desc: string) => {
+    setCustomBlends(prev => ({
+      ...prev,
+      [selectedCropId]: { title, desc }
+    }));
+    setShowOptionsModal(false);
+    speak(language === 'hi' ? 'वैकल्पिक पोषण मिश्रण चुना गया।' : `Selected alternative blend: ${title}`);
+  };
+
+  const openWhyModal = (type: 'agronomic' | 'ai') => {
+    if (type === 'agronomic') {
+      setWhyModalContent(
+        language === 'hi'
+          ? `आपके खेत का नाइट्रोजन स्तर कम (35%) आंका गया है। गेहूं में टिलरिंग चरण में वानस्पतिक विकास को सहारा देने के लिए अतिरिक्त नाइट्रोजन की आवश्यकता होती है। यह मिश्रण 12% उत्पादकता बढ़ाएगा।`
+          : `Your field soil has estimated low Nitrogen levels (35%). During the wheat tillering stage, nitrogen is crucial to support rapid tiller elongation and chlorophyll synthesis, preventing yield loss.`
+      );
+    } else {
+      setWhyModalContent(
+        language === 'hi'
+          ? `यह एआई विश्लेषण 94% सटीक है। हालिया उपग्रह वनस्पति चित्र (NDVI), बीते 48 घंटों की मिट्टी की नमी, और राजपुरा मौसम विज्ञान डेटा को जोड़कर यह निष्कर्ष निकाला गया है।`
+          : `This recommendation is based on a multi-modal analysis with a 94% accuracy score. Data sources include recent Sentinel-2 NDVI satellite indices, localized Meteoblue soil parameters, and ICAR baseline models.`
+      );
+    }
+  };
+
   return (
     <div id="nutriblend-view-root" className="space-y-6 max-w-6xl mx-auto pb-24 md:pb-12 text-[#26332A] font-sans">
       
@@ -205,10 +246,10 @@ export const NutriBlendView: React.FC = () => {
               <Scale className="w-4 h-4 text-emerald-600 animate-pulse" />
               <span>NUTRIBLEND™ • SMART CROP NUTRITION PLAN</span>
             </div>
-            <h2 className="text-3xl font-black tracking-tight text-slate-900 leading-tight">
+            <h2 className="text-3xl font-black tracking-tight text-slate-905 leading-tight">
               Crop Nutrition Plan
             </h2>
-            <p className="text-sm text-slate-500 font-medium leading-relaxed">
+            <p className="text-sm text-slate-505 font-medium leading-relaxed">
               What to give your crop, how much to apply, and the exact best time.
             </p>
           </div>
@@ -261,7 +302,7 @@ export const NutriBlendView: React.FC = () => {
             <select
               value={selectedField}
               onChange={(e) => setSelectedField(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-black text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/25 cursor-pointer"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-black text-slate-805 focus:outline-none focus:ring-2 focus:ring-emerald-500/25 cursor-pointer"
             >
               <option value="field1">Field 01 • Main Plot</option>
               <option value="field2">Field 02 • Tubewell Plot</option>
@@ -290,7 +331,7 @@ export const NutriBlendView: React.FC = () => {
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider flex items-center gap-1">
               📐 AREA
             </label>
-            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+            <div className="flex items-center bg-slate-55 border border-slate-200 rounded-xl px-3 py-1.5">
               <input
                 type="number"
                 min="0.5"
@@ -313,12 +354,15 @@ export const NutriBlendView: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-slate-500">
+          <div className="flex items-center gap-2 text-slate-505">
             <Clock className="w-3.5 h-3.5" />
             <span>
               Last application: <strong className="text-slate-700 font-bold">Nitrogen blend 12 days ago</strong>
             </span>
-            <button className="text-emerald-700 font-extrabold hover:underline ml-1 cursor-pointer">
+            <button 
+              onClick={() => setShowHistoryModal(true)}
+              className="text-emerald-700 font-extrabold hover:underline ml-1 cursor-pointer"
+            >
               History →
             </button>
           </div>
@@ -326,10 +370,10 @@ export const NutriBlendView: React.FC = () => {
       </div>
 
       {/* 3. WHAT YOUR CROP NEEDS CARD */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-6">
+      <div className="bg-white border border-slate-205 rounded-3xl p-6 shadow-xs space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <span className="bg-slate-100 text-slate-700 text-[10px] font-black px-2.5 py-1 rounded-md tracking-wider">
+            <span className="bg-slate-100 text-slate-707 text-[10px] font-black px-2.5 py-1 rounded-md tracking-wider">
               WHAT YOUR CROP NEEDS
             </span>
             <div className="flex items-center gap-1.5 text-lg font-black text-slate-900">
@@ -343,7 +387,10 @@ export const NutriBlendView: React.FC = () => {
             </div>
           </div>
 
-          <button className="text-emerald-800 text-xs font-bold hover:underline flex items-center gap-1 bg-emerald-50/50 border border-emerald-100 rounded-lg px-3 py-1.5 cursor-pointer">
+          <button 
+            onClick={() => openWhyModal('agronomic')}
+            className="text-emerald-805 text-xs font-bold hover:underline flex items-center gap-1 bg-emerald-50/50 border border-emerald-100 rounded-lg px-3 py-1.5 cursor-pointer"
+          >
             <Info className="w-3.5 h-3.5" />
             <span>Why this recommendation?</span>
           </button>
@@ -353,19 +400,22 @@ export const NutriBlendView: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           
           {/* Card 1: What to apply */}
-          <div className="bg-emerald-50/30 border border-emerald-100 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+          <div className="bg-emerald-50/30 border border-emerald-105 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
             <div>
               <span className="text-[10px] font-black text-emerald-800 tracking-wider block uppercase">
                 1. WHAT TO APPLY
               </span>
-              <h4 className="text-base font-black text-emerald-950 mt-2">
-                {selectedCrop.whatToApply.title}
+              <h4 className="text-base font-black text-emerald-955 mt-2">
+                {displayTitle}
               </h4>
               <p className="text-xs text-emerald-800/80 font-medium mt-1 leading-relaxed">
-                {selectedCrop.whatToApply.desc}
+                {displayDesc}
               </p>
             </div>
-            <button className="text-emerald-700 text-xs font-black hover:underline text-left mt-3 flex items-center gap-1 cursor-pointer">
+            <button 
+              onClick={() => setShowOptionsModal(true)}
+              className="text-emerald-700 text-xs font-black hover:underline text-left mt-3 flex items-center gap-1 cursor-pointer"
+            >
               <span>🔄 See Other Blend Options</span>
               <span>→</span>
             </button>
@@ -374,7 +424,7 @@ export const NutriBlendView: React.FC = () => {
           {/* Card 2: How much */}
           <div className="bg-slate-50 border border-slate-200/85 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
             <div>
-              <span className="text-[10px] font-black text-slate-500 tracking-wider block uppercase">
+              <span className="text-[10px] font-black text-slate-505 tracking-wider block uppercase">
                 2. HOW MUCH
               </span>
               <div className="mt-2 flex items-baseline gap-1">
@@ -413,7 +463,7 @@ export const NutriBlendView: React.FC = () => {
 
         {/* 4 Application Steps */}
         <div className="bg-slate-50/70 border border-slate-200/60 rounded-2xl p-5 space-y-3">
-          <h4 className="text-[11px] font-black text-slate-650 tracking-wider uppercase">
+          <h4 className="text-[11px] font-black text-slate-655 tracking-wider uppercase">
             🚜 HOW TO APPLY (SIMPLE 4 STEPS):
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -429,27 +479,33 @@ export const NutriBlendView: React.FC = () => {
         </div>
 
         {/* Action Bar */}
-        <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-slate-100">
+        <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-slate-105">
           <button
             type="button"
-            onClick={() => setIsApplied(!isApplied)}
+            onClick={() => {
+              setIsApplied(!isApplied);
+              speak(isApplied ? "Recommendation cancelled" : "Applied Smart Nutrition Recommendation");
+            }}
             className={`px-5 py-3 rounded-xl text-xs font-black flex items-center gap-2 transition-all cursor-pointer ${
               isApplied 
                 ? 'bg-emerald-800 text-white shadow-xs' 
-                : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md'
+                : 'bg-emerald-600 hover:bg-emerald-705 text-white shadow-md'
             }`}
           >
             {isApplied ? <Check className="w-4 h-4" /> : null}
             <span>{isApplied ? 'Applied Recommendation' : '✓ Apply Recommendation'}</span>
           </button>
 
-          <button className="px-5 py-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-700 cursor-pointer">
+          <button 
+            onClick={() => openWhyModal('agronomic')}
+            className="px-5 py-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-700 cursor-pointer"
+          >
             Why this recommendation?
           </button>
 
           <button 
             onClick={handleVoiceAsk}
-            className="px-5 py-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-xs font-black text-emerald-800 flex items-center gap-1.5 cursor-pointer ml-auto"
+            className="px-5 py-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-xs font-black text-emerald-805 flex items-center gap-1.5 cursor-pointer ml-auto"
           >
             <Bot className="w-4 h-4 text-emerald-600 animate-bounce" />
             <span>Ask AI</span>
@@ -464,11 +520,14 @@ export const NutriBlendView: React.FC = () => {
             <h3 className="text-lg font-black text-slate-900">
               Nutrient Status Summary
             </h3>
-            <p className="text-xs text-slate-500 font-medium">
+            <p className="text-xs text-slate-505 font-medium">
               Simple color indicators for your field
             </p>
           </div>
-          <button className="text-emerald-700 text-xs font-black hover:underline cursor-pointer">
+          <button 
+            onClick={() => setShowAnalysisModal(true)}
+            className="text-emerald-700 text-xs font-black hover:underline cursor-pointer"
+          >
             View Detailed Nutrient Analysis →
           </button>
         </div>
@@ -478,9 +537,9 @@ export const NutriBlendView: React.FC = () => {
           <div className="bg-amber-50/20 border border-amber-200/50 rounded-2xl p-4 flex flex-col justify-between min-h-[90px] shadow-2xs">
             <div>
               <h4 className="text-sm font-black text-slate-900">Nitrogen (N)</h4>
-              <p className="text-[11px] text-slate-500 font-medium">Leaf & Tiller Growth</p>
+              <p className="text-[11px] text-slate-550 font-medium">Leaf & Tiller Growth</p>
             </div>
-            <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold px-2 py-0.5 rounded-full self-start mt-2">
+            <span className="inline-flex items-center gap-1.5 bg-amber-55 text-amber-805 border border-amber-200 text-xs font-bold px-2 py-0.5 rounded-full self-start mt-2">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
               Low / Needs Attention
             </span>
@@ -490,7 +549,7 @@ export const NutriBlendView: React.FC = () => {
           <div className="bg-emerald-50/10 border border-slate-200 rounded-2xl p-4 flex flex-col justify-between min-h-[90px] shadow-2xs">
             <div>
               <h4 className="text-sm font-black text-slate-900">Phosphorus (P)</h4>
-              <p className="text-[11px] text-slate-500 font-medium">Root Development</p>
+              <p className="text-[11px] text-slate-550 font-medium">Root Development</p>
             </div>
             <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-850 border border-emerald-200 text-xs font-bold px-2 py-0.5 rounded-full self-start mt-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
@@ -502,7 +561,7 @@ export const NutriBlendView: React.FC = () => {
           <div className="bg-emerald-50/10 border border-slate-200 rounded-2xl p-4 flex flex-col justify-between min-h-[90px] shadow-2xs">
             <div>
               <h4 className="text-sm font-black text-slate-900">Potassium (K)</h4>
-              <p className="text-[11px] text-slate-500 font-medium">Disease Resistance</p>
+              <p className="text-[11px] text-slate-550 font-medium">Disease Resistance</p>
             </div>
             <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-850 border border-emerald-200 text-xs font-bold px-2 py-0.5 rounded-full self-start mt-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
@@ -515,7 +574,7 @@ export const NutriBlendView: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
           
           {/* Estimated Cost */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3 relative overflow-hidden">
+          <div className="bg-slate-55 border border-slate-200 rounded-2xl p-5 space-y-3 relative overflow-hidden">
             <span className="absolute top-4 right-4 bg-emerald-55 text-emerald-800 text-[11px] font-black px-2.5 py-0.5 rounded-full border border-emerald-200">
               Saves ~₹{(totalSavings).toLocaleString('en-IN')}
             </span>
@@ -524,21 +583,24 @@ export const NutriBlendView: React.FC = () => {
             </span>
             <div className="flex items-baseline gap-1.5 mt-2">
               <span className="text-2xl font-black text-slate-900">₹{selectedCrop.costPerAcre}</span>
-              <span className="text-xs font-bold text-slate-500">/ acre</span>
-              <span className="text-xs text-slate-500 font-medium ml-1">
+              <span className="text-xs font-bold text-slate-505">/ acre</span>
+              <span className="text-xs text-slate-555 font-medium ml-1">
                 (Total ₹{totalCost.toLocaleString('en-IN')} for {acresInput} acres)
               </span>
             </div>
             <p className="text-xs text-slate-600 font-medium leading-relaxed">
               Eliminates over-fertilization, saving up to ₹1,200 per application.
             </p>
-            <button className="text-emerald-700 text-xs font-black hover:underline block cursor-pointer">
+            <button 
+              onClick={() => setShowCostModal(true)}
+              className="text-emerald-700 text-xs font-black hover:underline block cursor-pointer"
+            >
               View Cost Breakdown →
             </button>
           </div>
 
           {/* AI Recommendation Confidence */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3 relative overflow-hidden">
+          <div className="bg-slate-55 border border-slate-200 rounded-2xl p-5 space-y-3 relative overflow-hidden">
             <span className="absolute top-4 right-4 bg-emerald-55 text-emerald-800 text-[11px] font-black px-2.5 py-0.5 rounded-full border border-emerald-200">
               {selectedCrop.accuracyScore}% Accuracy Score
             </span>
@@ -549,10 +611,13 @@ export const NutriBlendView: React.FC = () => {
               <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
               <span>High Confidence</span>
             </div>
-            <p className="text-xs text-slate-600 font-medium leading-relaxed">
+            <p className="text-xs text-slate-650 font-medium leading-relaxed">
               Backed by recent soil lab tests, 48-hr weather radar, and local ICAR crop models.
             </p>
-            <button className="text-emerald-700 text-xs font-black hover:underline block cursor-pointer">
+            <button 
+              onClick={() => openWhyModal('ai')}
+              className="text-emerald-705 text-xs font-black hover:underline block cursor-pointer"
+            >
               How confident is this recommendation? →
             </button>
           </div>
@@ -577,7 +642,7 @@ export const NutriBlendView: React.FC = () => {
               key={idx}
               type="button"
               onClick={() => handleVoicePromptClick(prompt)}
-              className="bg-white hover:bg-amber-50 text-slate-800 border border-amber-200/60 rounded-xl px-4 py-2.5 text-xs font-black shadow-2xs hover:shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+              className="bg-white hover:bg-amber-50 text-slate-808 border border-amber-200/60 rounded-xl px-4 py-2.5 text-xs font-black shadow-2xs hover:shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
             >
               <span>💬</span>
               <span>{prompt}</span>
@@ -613,7 +678,7 @@ export const NutriBlendView: React.FC = () => {
       {/* 7. CUSTOM BLENDER MODAL */}
       {isBlenderOpen && (
         <div className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl w-full max-w-lg space-y-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white border border-slate-202 rounded-3xl p-6 shadow-2xl w-full max-w-lg space-y-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-emerald-600" />
@@ -638,7 +703,7 @@ export const NutriBlendView: React.FC = () => {
             <div className="space-y-4">
               {/* Nitrogen */}
               <div className="space-y-1">
-                <div className="flex justify-between text-xs font-bold text-slate-700">
+                <div className="flex justify-between text-xs font-bold text-slate-707">
                   <span>Nitrogen (N)</span>
                   <span className="text-emerald-700 font-black">{blenderN}%</span>
                 </div>
@@ -654,7 +719,7 @@ export const NutriBlendView: React.FC = () => {
 
               {/* Phosphorus */}
               <div className="space-y-1">
-                <div className="flex justify-between text-xs font-bold text-slate-700">
+                <div className="flex justify-between text-xs font-bold text-slate-707">
                   <span>Phosphorus (P)</span>
                   <span className="text-emerald-700 font-black">{blenderP}%</span>
                 </div>
@@ -670,7 +735,7 @@ export const NutriBlendView: React.FC = () => {
 
               {/* Potassium */}
               <div className="space-y-1">
-                <div className="flex justify-between text-xs font-bold text-slate-700">
+                <div className="flex justify-between text-xs font-bold text-slate-707">
                   <span>Potassium (K)</span>
                   <span className="text-emerald-700 font-black">{blenderK}%</span>
                 </div>
@@ -687,17 +752,17 @@ export const NutriBlendView: React.FC = () => {
 
             {/* Calculations display */}
             <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-              <div className="flex justify-between text-xs font-bold text-slate-650">
+              <div className="flex justify-between text-xs font-bold text-slate-655">
                 <span>Total Active Nutrients:</span>
                 <span className="text-slate-800 font-black">{blenderN + blenderP + blenderK}%</span>
               </div>
-              <div className="flex justify-between text-xs font-bold text-slate-650">
+              <div className="flex justify-between text-xs font-bold text-slate-655">
                 <span>Calculated Organic Bio-NPK ratio:</span>
-                <span className="text-emerald-700 font-black">62% (Bio) / 38% (Chemical)</span>
+                <span className="text-emerald-707 font-black">62% (Bio) / 38% (Chemical)</span>
               </div>
               <div className="flex justify-between text-xs font-black text-slate-900 border-t border-slate-200 pt-2">
                 <span>Agronomic Advice:</span>
-                <span className="text-amber-700 text-xs font-bold">
+                <span className="text-amber-707 text-xs font-bold">
                   {blenderN > 50 ? 'Excessive N! Reduce to avoid leaf burn.' : 'Safe and balanced mix.'}
                 </span>
               </div>
@@ -711,7 +776,7 @@ export const NutriBlendView: React.FC = () => {
                   setIsBlenderOpen(false);
                   setCustomBlenderSaved(false);
                 }}
-                className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-50 cursor-pointer"
+                className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-55 cursor-pointer"
               >
                 Cancel
               </button>
@@ -724,10 +789,234 @@ export const NutriBlendView: React.FC = () => {
                     setCustomBlenderSaved(false);
                   }, 1200);
                 }}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black cursor-pointer shadow-md flex items-center gap-1.5"
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-705 text-white rounded-xl text-xs font-black cursor-pointer shadow-md flex items-center gap-1.5"
               >
                 {customBlenderSaved ? <Check className="w-3.5 h-3.5" /> : null}
                 <span>{customBlenderSaved ? 'Recipe Saved!' : 'Save Recipe'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* WHY THIS RECOMMENDATION MODAL */}
+      {whyModalContent && (
+        <div className="fixed inset-0 bg-slate-955/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl w-full max-w-md space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <Info className="w-5 h-5 text-emerald-600" />
+                <span>Agronomic Advisory Notes</span>
+              </h3>
+              <button
+                onClick={() => setWhyModalContent(null)}
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed font-semibold">
+              {whyModalContent}
+            </p>
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setWhyModalContent(null)}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-black hover:bg-emerald-700 cursor-pointer shadow-xs"
+              >
+                Got it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ALTERNATIVE OPTIONS MODAL */}
+      {showOptionsModal && (
+        <div className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl w-full max-w-lg space-y-4 max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-105 pb-3">
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-emerald-600 animate-pulse" />
+                <span>Alternative Nutrient Options</span>
+              </h3>
+              <button
+                onClick={() => setShowOptionsModal(false)}
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 pt-2">
+              {[
+                {
+                  title: 'Option A: Bio-NPK compost tea',
+                  desc: 'Rich in active microbes and potassium humates. Boosts nitrogen organic uptake without salt stress.'
+                },
+                {
+                  title: 'Option B: Dry Neem-Coated Urea 46%',
+                  desc: 'Slow-release granules that reduce nitrate leaching by 30%. Best applied right before light watering.'
+                },
+                {
+                  title: 'Option C: Foliar NPK (19-19-19) Spray',
+                  desc: 'Immediate leaf absorption for swift nutrient recovery. Use 1.5kg/acre mixed in 200L water.'
+                }
+              ].map((opt, idx) => (
+                <div key={idx} className="p-4 bg-slate-50 hover:bg-emerald-50/20 border border-slate-200/80 rounded-2xl transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-black text-slate-800">{opt.title}</h4>
+                    <p className="text-[11px] text-slate-550 leading-relaxed font-semibold">{opt.desc}</p>
+                  </div>
+                  <button
+                    onClick={() => handleSelectAlternative(opt.title, opt.desc)}
+                    className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shrink-0 cursor-pointer shadow-2xs"
+                  >
+                    Select
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* HISTORY MODAL */}
+      {showHistoryModal && (
+        <div className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl w-full max-w-md space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-emerald-600" />
+                <span>Field Nutrition History</span>
+              </h3>
+              <button
+                onClick={() => setShowHistoryModal(false)}
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4 pt-2">
+              {[
+                { date: '03 Aug 2026', title: 'Nitrogen Blend (basal)', qty: '10.0 kg', status: 'Completed' },
+                { date: '18 Jul 2026', title: 'Single Superphosphate (SSP)', qty: '12.5 kg', status: 'Completed' },
+                { date: '25 Jun 2026', title: 'Organic FYM Manure tilling', qty: '400 kg', status: 'Completed' }
+              ].map((hist, idx) => (
+                <div key={idx} className="flex items-start gap-3 border-l-2 border-emerald-500 pl-3">
+                  <div className="space-y-0.5">
+                    <p className="text-[10px] text-slate-500 font-bold">{hist.date}</p>
+                    <p className="text-xs font-black text-slate-805">{hist.title}</p>
+                    <p className="text-[11px] text-emerald-700 font-bold">Qty: {hist.qty} • {hist.status}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setShowHistoryModal(false)}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-black cursor-pointer shadow-xs"
+              >
+                Close Logs
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ANALYSIS MODAL */}
+      {showAnalysisModal && (
+        <div className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl w-full max-w-md space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <Leaf className="w-5 h-5 text-emerald-600" />
+                <span>Detailed Leaf Tissue Report</span>
+              </h3>
+              <button
+                onClick={() => setShowAnalysisModal(false)}
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4 pt-2">
+              {[
+                { name: 'Nitrogen (N)', percent: 35, color: 'bg-amber-500', note: 'Deficient' },
+                { name: 'Phosphorus (P)', percent: 68, color: 'bg-emerald-600', note: 'Adequate' },
+                { name: 'Potassium (K)', percent: 84, color: 'bg-emerald-600', note: 'Optimal' },
+                { name: 'Sulphur (S)', percent: 42, color: 'bg-amber-500', note: 'Low' },
+                { name: 'Zinc (Zn)', percent: 76, color: 'bg-emerald-600', note: 'Optimal' }
+              ].map((nut, idx) => (
+                <div key={idx} className="space-y-1">
+                  <div className="flex justify-between text-xs font-bold text-slate-700">
+                    <span>{nut.name}</span>
+                    <span>{nut.percent}% ({nut.note})</span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-105 rounded-full overflow-hidden">
+                    <div className={`h-full ${nut.color} rounded-full`} style={{ width: `${nut.percent}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setShowAnalysisModal(false)}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-black cursor-pointer shadow-xs"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* COST BREAKDOWN MODAL */}
+      {showCostModal && (
+        <div className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl w-full max-w-md space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <Coins className="w-5 h-5 text-emerald-600" />
+                <span>Cost & Savings Ledger</span>
+              </h3>
+              <button
+                onClick={() => setShowCostModal(false)}
+                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 pt-2 text-xs">
+              <div className="flex justify-between font-bold text-slate-655">
+                <span>Fertilizer inputs ({totalAmount.toFixed(1)} kg):</span>
+                <span>₹{(selectedCrop.costPerAcre * acresInput * 0.7).toFixed(0)}</span>
+              </div>
+              <div className="flex justify-between font-bold text-slate-655">
+                <span>Labor / spray hire:</span>
+                <span>₹{(selectedCrop.costPerAcre * acresInput * 0.2).toFixed(0)}</span>
+              </div>
+              <div className="flex justify-between font-bold text-slate-655">
+                <span>Water / diesel pumping:</span>
+                <span>₹{(selectedCrop.costPerAcre * acresInput * 0.1).toFixed(0)}</span>
+              </div>
+              <div className="border-t border-slate-150 pt-2 flex justify-between font-black text-slate-900 text-sm">
+                <span>Total Budget Estimate:</span>
+                <span>₹{totalCost.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100 text-emerald-900 font-bold flex justify-between">
+                <span>Estimated Yield Profit Saved:</span>
+                <span>+ ₹{totalSavings.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setShowCostModal(false)}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-black cursor-pointer shadow-xs"
+              >
+                Close Ledger
               </button>
             </div>
           </div>
