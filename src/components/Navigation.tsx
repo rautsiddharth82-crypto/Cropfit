@@ -39,13 +39,13 @@ export const Navigation: React.FC<NavigationProps> = ({
     { id: 'home', icon: Home },
     { id: 'farm', icon: Sprout },
     { id: 'climate', icon: CloudSun },
-    { id: 'disease', icon: Camera },
+    { id: 'nutriblend', icon: Scale },
     { id: 'ai', icon: Bot },
   ] as const;
 
   const secondaryItems = [
+    { id: 'disease', label: t('nav_disease'), icon: Camera },
     { id: 'testing', label: t('nav_testing'), icon: FlaskConical },
-    { id: 'nutriblend', label: t('nav_nutriblend'), icon: Scale },
     { id: 'schemes', label: t('nav_schemes'), icon: Landmark },
     { id: 'simulator', label: t('nav_simulator'), icon: Sliders },
     { id: 'financials', label: t('nav_financials'), icon: Wallet },
@@ -69,10 +69,10 @@ export const Navigation: React.FC<NavigationProps> = ({
         hi: 'मौसम',
         pa: 'ਮੌਸਮ'
       },
-      disease: {
-        en: 'Scanner',
-        hi: 'जांच',
-        pa: 'ਜਾਂਚ'
+      nutriblend: {
+        en: 'NutriBlend',
+        hi: 'न्यूट्रीब्लेंड',
+        pa: 'ਨਿਊਟ੍ਰੀਬਲੈਂਡ'
       },
       ai: {
         en: 'AI Agent',
@@ -232,7 +232,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className={`flex-1 flex flex-col items-center justify-center py-1.5 rounded-xl transition-all duration-200 cursor-pointer ${
               isMenuOpen || isSecondaryActive
-                ? 'bg-emerald-50 text-emerald-850 border border-emerald-200/40 font-extrabold shadow-xs'
+                ? 'bg-emerald-50 text-emerald-855 border border-emerald-200/40 font-extrabold shadow-xs'
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >

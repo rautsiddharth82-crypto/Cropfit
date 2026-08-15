@@ -117,6 +117,14 @@ export default function App() {
     pushNavState({ tab: newTab });
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    const mainEl = document.querySelector('main');
+    if (mainEl) {
+      mainEl.scrollTop = 0;
+    }
+  }, [activeTab]);
+
   const handleUndo = () => {
     if (historyIndex > 0) {
       setHistoryIndex((prev) => prev - 1);

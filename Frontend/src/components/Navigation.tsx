@@ -39,13 +39,13 @@ export const Navigation: React.FC<NavigationProps> = ({
     { id: 'home', icon: Home },
     { id: 'farm', icon: Sprout },
     { id: 'climate', icon: CloudSun },
-    { id: 'disease', icon: Camera },
+    { id: 'nutriblend', icon: Scale },
     { id: 'ai', icon: Bot },
   ] as const;
 
   const secondaryItems = [
+    { id: 'disease', label: t('nav_disease'), icon: Camera },
     { id: 'testing', label: t('nav_testing'), icon: FlaskConical },
-    { id: 'nutriblend', label: t('nav_nutriblend'), icon: Scale },
     { id: 'schemes', label: t('nav_schemes'), icon: Landmark },
     { id: 'simulator', label: t('nav_simulator'), icon: Sliders },
     { id: 'financials', label: t('nav_financials'), icon: Wallet },
@@ -69,10 +69,10 @@ export const Navigation: React.FC<NavigationProps> = ({
         hi: 'मौसम',
         pa: 'ਮੌਸਮ'
       },
-      disease: {
-        en: 'Scanner',
-        hi: 'जांच',
-        pa: 'ਜਾਂਚ'
+      nutriblend: {
+        en: 'NutriBlend',
+        hi: 'न्यूट्रीब्लेंड',
+        pa: 'ਨਿਊਟ੍ਰੀਬਲੈਂਡ'
       },
       ai: {
         en: 'AI Agent',
