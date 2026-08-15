@@ -113,7 +113,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Undo and Redo Controls */}
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 ml-1">
+            <div className="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 ml-1">
               <button
                 id="btn-header-undo"
                 type="button"
@@ -155,39 +155,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* User Profile & Notifications for Mobile */}
-          <div className="flex items-center gap-1.5 md:hidden">
-            {/* Mobile Voice Toggle */}
-            <button
-              onClick={toggleVoice}
-              title={voiceEnabled ? 'वॉयस बंद करें' : 'वॉयस चालू करें'}
-              className={`p-2 rounded-xl transition-all cursor-pointer ${
-                voiceEnabled
-                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                  : 'bg-slate-100 text-slate-500'
-              }`}
-            >
-              {voiceEnabled ? <Volume2 className="w-4 h-4 text-emerald-700" /> : <VolumeX className="w-4 h-4" />}
-            </button>
-
-            {/* Mobile Language Selector */}
-            <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200">
-              {(['en', 'hi', 'pa'] as Language[]).map((lang) => (
-                <button
-                  key={lang}
-                  type="button"
-                  data-voice-text={lang === 'en' ? 'English' : lang === 'hi' ? 'हिंदी' : 'ਪੰਜਾਬੀ'}
-                  onClick={() => handleLangSelect(lang)}
-                  className={`px-1.5 py-1 text-[11px] font-black rounded-lg transition-all cursor-pointer ${
-                    currentLang === lang
-                      ? 'bg-emerald-600 text-white shadow-2xs'
-                      : 'text-slate-600'
-                  }`}
-                >
-                  {lang === 'en' ? 'EN' : lang === 'hi' ? 'हिन्दी' : 'ਪੰ'}
-                </button>
-              ))}
-            </div>
-
+          <div className="flex items-center gap-2 md:hidden">
             <button
               id="btn-header-notifications-mobile"
               data-voice-text={t('notifications')}
@@ -200,14 +168,6 @@ export const Header: React.FC<HeaderProps> = ({
                   {unreadCount}
                 </span>
               )}
-            </button>
-            <button
-              id="btn-header-settings-mobile"
-              data-voice-text={t('settings')}
-              onClick={handleSettingsClick}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-emerald-50 text-slate-700 cursor-pointer"
-            >
-              <Settings className="w-5 h-5" />
             </button>
           </div>
         </div>

@@ -613,7 +613,7 @@ export const NutriBlendView: React.FC = () => {
       {/* 7. CUSTOM BLENDER MODAL */}
       {isBlenderOpen && (
         <div className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl w-full max-w-lg space-y-6">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl w-full max-w-lg space-y-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-emerald-600" />

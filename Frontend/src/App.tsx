@@ -409,6 +409,7 @@ export default function App() {
         <Navigation
           activeTab={activeTab}
           onTabChange={(tab) => navigateToTab(tab)}
+          onOpenSettings={() => pushNavState({ showSettingsModal: true })}
         />
 
         {/* Climate Risk Why Alert Modal (Screen 5 & Screen 6) */}

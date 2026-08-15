@@ -32,11 +32,11 @@ export const ClimateRiskWarningModal: React.FC<ClimateRiskWarningModalProps> = (
 
   const currentSignals: SignalValidation[] = simulateConflict
     ? [
-        { source: 'Weather Station', status: 'High Risk', level: 'red', details: '36°C forecast heat peak' },
-        { source: 'Soil Sensors', status: 'Normal', level: 'green', details: 'Sensor reading 58% moisture (Calibrating)' },
-        { source: 'Satellite Thermal', status: 'Moderate Stress', level: 'orange', details: 'Thermal variance observed' },
-        { source: 'Farmer Field Observation', status: 'Disagrees', level: 'yellow', details: 'No visible wilting yet' }
-      ]
+      { source: 'Weather Station', status: 'High Risk', level: 'red', details: '36°C forecast heat peak' },
+      { source: 'Soil Sensors', status: 'Normal', level: 'green', details: 'Sensor reading 58% moisture (Calibrating)' },
+      { source: 'Satellite Thermal', status: 'Moderate Stress', level: 'orange', details: 'Thermal variance observed' },
+      { source: 'Farmer Field Observation', status: 'Disagrees', level: 'yellow', details: 'No visible wilting yet' }
+    ]
     : alert.signals;
 
   const zones2D = [
@@ -156,9 +156,8 @@ export const ClimateRiskWarningModal: React.FC<ClimateRiskWarningModalProps> = (
               </div>
               <div className="w-full bg-[#E6E9E5] h-3 rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    confidenceScore >= 75 ? 'bg-[#6FAF78]' : 'bg-[#F4B66A]'
-                  }`}
+                  className={`h-full rounded-full transition-all duration-500 ${confidenceScore >= 75 ? 'bg-[#6FAF78]' : 'bg-[#F4B66A]'
+                    }`}
                   style={{ width: `${confidenceScore}%` }}
                 />
               </div>
@@ -188,15 +187,14 @@ export const ClimateRiskWarningModal: React.FC<ClimateRiskWarningModalProps> = (
                 <div key={sig.source} className="p-3 bg-[#F8F7EF] rounded-xl border border-[#E6E9E5] space-y-1">
                   <span className="text-[11px] text-[#68736B] block font-semibold">{sig.source}</span>
                   <span
-                    className={`font-extrabold block text-xs ${
-                      sig.level === 'red'
+                    className={`font-extrabold block text-xs ${sig.level === 'red'
                         ? 'text-[#E88B8B]'
                         : sig.level === 'orange'
-                        ? 'text-[#C2410C]'
-                        : sig.level === 'yellow'
-                        ? 'text-[#854D0E]'
-                        : 'text-[#56965F]'
-                    }`}
+                          ? 'text-[#C2410C]'
+                          : sig.level === 'yellow'
+                            ? 'text-[#854D0E]'
+                            : 'text-[#56965F]'
+                      }`}
                   >
                     {sig.status}
                   </span>
@@ -236,17 +234,15 @@ export const ClimateRiskWarningModal: React.FC<ClimateRiskWarningModalProps> = (
                   key={z.id}
                   id={`btn-2d-zone-${z.id}`}
                   onClick={() => setSelectedMapZone(z.id)}
-                  className={`p-3 rounded-xl font-extrabold text-xs text-center transition-all border ${
-                    selectedMapZone === z.id ? 'ring-2 ring-[#26332A] scale-105 shadow-xs' : ''
-                  } ${
-                    z.status === 'green'
+                  className={`p-3 rounded-xl font-extrabold text-xs text-center transition-all border ${selectedMapZone === z.id ? 'ring-2 ring-[#26332A] scale-105 shadow-xs' : ''
+                    } ${z.status === 'green'
                       ? 'bg-[#EAF5EC] text-[#56965F] border-[#A8D5A2]'
                       : z.status === 'yellow'
-                      ? 'bg-[#F7E7A8] text-[#854D0E] border-[#F4B66A]'
-                      : z.status === 'orange'
-                      ? 'bg-[#F4B66A]/30 text-[#C2410C] border-[#F4B66A]'
-                      : 'bg-[#E88B8B] text-white border-[#E88B8B]'
-                  }`}
+                        ? 'bg-[#F7E7A8] text-[#854D0E] border-[#F4B66A]'
+                        : z.status === 'orange'
+                          ? 'bg-[#F4B66A]/30 text-[#C2410C] border-[#F4B66A]'
+                          : 'bg-[#E88B8B] text-white border-[#E88B8B]'
+                    }`}
                 >
                   {z.label}
                 </button>

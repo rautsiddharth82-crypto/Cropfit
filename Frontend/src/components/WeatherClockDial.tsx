@@ -55,6 +55,14 @@ export const WeatherClockDial: React.FC<WeatherClockDialProps> = ({
   const [cycleMode, setCycleMode] = useState<'PM' | 'AM'>('PM');
   const dialRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Keep live time ticking if live clock is active
   useEffect(() => {
@@ -616,7 +624,7 @@ export const WeatherClockDial: React.FC<WeatherClockDialProps> = ({
             // Angle around clock (0 = 12 o'clock, 1 = 1 o'clock, ..., 11 = 11 o'clock)
             const angleDeg = idx * 30;
             const angleRad = ((angleDeg - 90) * Math.PI) / 180;
-            const radiusPx = 142; // Distance from center on desktop / scalable via CSS
+            const radiusPx = isMobile ? 112 : 142; // Distance from center on desktop / scalable via CSS
             const x = Math.cos(angleRad) * radiusPx;
             const y = Math.sin(angleRad) * radiusPx;
 
