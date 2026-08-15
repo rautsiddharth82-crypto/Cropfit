@@ -10,7 +10,7 @@ import type { FarmContext } from './geminiClient';
 
 export class GroqClient {
   private groq: Groq | null = null;
-  private model = 'llama-3.3-70b-versatile';
+  private model = 'qwen/qwen3.6-27b';
 
   private getClient(): Groq {
     if (!this.groq) {
@@ -35,7 +35,6 @@ export class GroqClient {
 You provide precise, actionable, and safe agronomic advice to farmers.
 Use the following context about the farmer and their field to personalize your response.
 If the farmer asks a question in a language other than English, reply in that language (e.g., Hindi, Punjabi).
-Always be concise, empathetic, and professional.
 
 FARMER CONTEXT:
 Name: ${context.farmerName || 'Farmer'}
@@ -46,10 +45,11 @@ Growth Stage: ${context.growthStage || 'Unknown'}
 Current Temperature: ${context.temperature ? `${context.temperature}°C` : 'Unknown'}
 Recent Alerts: ${context.recentAlerts?.join(', ') || 'None'}
 
-IMPORTANT INSTRUCTION:
-Before giving your final advice, you MUST explain your agronomic and physical reasoning.
-Wrap your thought process inside <reasoning>...</reasoning> tags. 
-After the reasoning tags, provide the final response to the farmer.
+IMPORTANT INSTRUCTIONS:
+- Reply in extremely precise, simple, and easy-to-understand words.
+- Keep your entire response very short and direct (maximum of 2-3 sentences or simple bullet points).
+- Do NOT provide long explanations, reasoning steps, or verbose paragraphs.
+- Answer the user's question directly.
 `;
 
     try {
@@ -62,12 +62,16 @@ After the reasoning tags, provide the final response to the farmer.
         temperature: 0.3,
       });
 
-      const reply = response.choices[0]?.message?.content || 'I could not generate a response.';
+      let reply = response.choices[0]?.message?.content || 'I could not generate a response.';
+      
+      // Clean and remove the thinking process reasoning block
+      reply = reply.replace(/<reasoning>[\s\S]*?<\/reasoning>/gi, '').trim();
+      reply = reply.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
       
       return {
         reply,
         confidence: 90, // Static for now, as Groq doesn't provide confidence scores
-        sources: ['Groq AI (llama-3.3-70b-versatile)'],
+        sources: ['Groq AI (qwen/qwen3.6-27b)'],
       };
     } catch (err) {
       console.error('Groq generation error:', err);
@@ -129,8 +133,9 @@ Return ONLY the raw JSON object. Do NOT include markdown blocks like \`\`\`json.
       });
 
       const rawJson = response.choices[0]?.message?.content || '{}';
-      // Clean up potential markdown formatting
-      const cleaned = rawJson.replace(/```json/g, '').replace(/```/g, '').trim();
+      // Clean up potential think tags and markdown formatting
+      let cleaned = rawJson.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+      cleaned = cleaned.replace(/```json/g, '').replace(/```/g, '').trim();
       return JSON.parse(cleaned);
     } catch (err) {
       console.error('Groq parse error:', err);

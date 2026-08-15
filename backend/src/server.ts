@@ -191,7 +191,10 @@ async function startServer() {
     try {
       const { createServer: createViteServer } = await import("vite");
       const vite = await createViteServer({
-        server: { middlewareMode: true },
+        server: {
+          middlewareMode: true,
+          hmr: false // Disable HMR on backend to prevent conflict with frontend
+        },
         appType: "spa",
       });
       app.use(vite.middlewares);
@@ -209,14 +212,14 @@ async function startServer() {
   // ──────────────────────────────────────────────
   // Error Handling (Must be last)
   // ──────────────────────────────────────────────
-  
+
   app.use(notFoundHandler);
   app.use(errorHandler);
 
   // ──────────────────────────────────────────────
   // Start Server
   // ──────────────────────────────────────────────
-  
+
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`\n🌾 ═══════════════════════════════════════════════════`);
     console.log(`🌾  CropFit Backend Server v2.0`);

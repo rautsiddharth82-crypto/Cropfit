@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+@theme {
+  --color-farm-bg: #F3F7F4;
+  --color-farm-surface: #FFFFFF;
+  --color-farm-primary: #10B981;
+  --color-farm-primary-dark: #047857;
+  --color-farm-secondary: #0284C7;
+  --color-farm-sky: #38BDF8;
+  --color-farm-yellow: #F59E0B;
+  --color-farm-orange: #EA580C;
+  --color-farm-red: #EF4444;
+  --color-farm-text: #0F172A;
+  --color-farm-text-muted: #64748B;
+  --color-farm-border: #E2E8F0;
+}
+
+:root {
+  --farm-bg: #F3F7F4;
+  --farm-surface: #FFFFFF;
+  --farm-primary: #10B981;
+  --farm-primary-dark: #047857;
+  --farm-secondary: #0284C7;
+  --farm-sky: #38BDF8;
+  --farm-yellow: #F59E0B;
+  --farm-orange: #EA580C;
+  --farm-red: #EF4444;
+  --farm-text: #0F172A;
+  --farm-text-muted: #64748B;
+  --farm-border: #E2E8F0;
+}
+
+body {
+  background-color: var(--farm-bg);
+  color: var(--farm-text);
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F3F7F4;
+}
+::-webkit-scrollbar-thumb {
+  background: #A7F3D0;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #10B981;
+}
+
+/* Touch friendly button active states */
+button, a {
+  touch-action: manipulation;
+}
+
+/* Weather Animated Background Keyframes */
+@keyframes cloud-drift-fast {
+  0% { transform: translate3d(-40%, 0, 0); }
+  100% { transform: translate3d(140%, 0, 0); }
+}
+
+@keyframes cloud-drift-mid {
+  0% { transform: translate3d(-60%, 0, 0); }
+  100% { transform: translate3d(120%, 0, 0); }
+}
+
+@keyframes cloud-drift-slow {
+  0% { transform: translate3d(-80%, 0, 0); }
+  100% { transform: translate3d(110%, 0, 0); }
+}
+
+@keyframes rain-drop-fall {
+  0% {
+    transform: translate3d(0, -40px, 0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.85;
+  }
+  90% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(-20px, 240px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes sun-glow-pulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.12) rotate(180deg);
+    opacity: 0.95;
+  }
+}
+
+@keyframes sun-rays-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes wind-trail-flow {
+  0% {
+    transform: translate3d(-100%, 0, 0) scaleX(0.7);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.75;
+  }
+  80% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(120%, 0, 0) scaleX(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes lightning-ambient {
+  0%, 88%, 93%, 97%, 100% {
+    opacity: 0;
+  }
+  90%, 95% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes particle-float {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate3d(20px, -25px, 0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(40px, -50px, 0);
+    opacity: 0.1;
+  }
+}
+
+.animate-cloud-fast {
+  animation: cloud-drift-fast 22s linear infinite;
+  will-change: transform;
+}
+
+.animate-cloud-mid {
+  animation: cloud-drift-mid 36s linear infinite;
+  will-change: transform;
+}
+
+.animate-cloud-slow {
+  animation: cloud-drift-slow 55s linear infinite;
+  will-change: transform;
+}
+
+.animate-sun-pulse {
+  animation: sun-glow-pulse 10s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-sun-spin {
+  animation: sun-rays-rotate 40s linear infinite;
+  will-change: transform;
+}
+
+.animate-lightning {
+  animation: lightning-ambient 7s ease-in-out infinite;
+}

@@ -7,8 +7,7 @@ import { getChatService } from '../services/chatService';
 export const chatRoutes = Router();
 const service = getChatService();
 
-// POST /api/chat/message
-chatRoutes.post('/message', async (req: Request, res: Response) => {
+const handleChatMessage = async (req: Request, res: Response) => {
   try {
     const { message, sessionId, farmContext } = req.body;
 
@@ -42,7 +41,10 @@ chatRoutes.post('/message', async (req: Request, res: Response) => {
     console.error('Chat message error:', err);
     res.status(500).json({ error: 'Failed to generate AI response' });
   }
-});
+};
+
+chatRoutes.post('/message', handleChatMessage);
+chatRoutes.post('/', handleChatMessage);
 
 // POST /api/chat/image
 chatRoutes.post('/image', async (req: Request, res: Response) => {
