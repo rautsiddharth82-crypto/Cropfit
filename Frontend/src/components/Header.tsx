@@ -91,7 +91,7 @@ export const Header: React.FC<HeaderProps> = ({
               alt="AgriSmart Logo"
               data-voice-text={profile.name}
               onClick={() => speak(`${profile.name}, ${profile.location}`)}
-              className="h-10 w-auto max-w-[120px] object-contain shrink-0 cursor-pointer select-none"
+              className="h-14 w-auto max-w-[160px] object-contain shrink-0 cursor-pointer select-none"
             />
             <div>
               <h1
