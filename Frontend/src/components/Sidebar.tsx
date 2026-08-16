@@ -57,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             alt="AgriSmart Logo"
             data-voice-text="एग्रीस्मार्ट कृषि ऐप"
             onClick={() => speak('AgriSmart AI')}
-            className="h-14 w-auto max-w-[170px] object-contain cursor-pointer select-none"
+            className="h-20 w-auto max-w-[210px] object-contain cursor-pointer select-none"
           />
         </div>
 
