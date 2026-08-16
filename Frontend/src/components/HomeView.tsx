@@ -344,7 +344,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </span>
             </div>
             <span className="text-sm sm:text-base font-black text-white">
-              {weather.humidityPercent}%
+              {Number(weather.humidityPercent).toFixed(2)}%
             </span>
           </div>
 
@@ -376,7 +376,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </span>
             </div>
             <span className="text-sm sm:text-base font-black text-white">
-              {weather.windSpeedKmh} <span className="text-[10px] font-normal">km/h</span>
+              {Number(weather.windSpeedKmh).toFixed(2)} <span className="text-[10px] font-normal">km/h</span>
             </span>
           </div>
         </div>
