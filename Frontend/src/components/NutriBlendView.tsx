@@ -243,7 +243,7 @@ export const NutriBlendView: React.FC = () => {
         className="rounded-3xl p-6 shadow-md relative overflow-hidden border border-emerald-900/20"
         style={{
           backgroundImage: `url('/images/nutriblend_bg.png')`,
-          backgroundSize: '85% auto',
+          backgroundSize: 'cover',
           backgroundPosition: 'center center',
           backgroundRepeat: 'no-repeat',
         }}
