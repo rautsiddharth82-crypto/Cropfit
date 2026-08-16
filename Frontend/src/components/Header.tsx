@@ -1,4 +1,5 @@
 import React from 'react';
+import logoImg from '../Images/logo.jpeg';
 import { Bell, MapPin, Settings, Globe, Undo2, Redo2, Volume2, VolumeX } from 'lucide-react';
 import { FarmerProfile, Language, AppTab } from '../types';
 import { SearchBar } from './SearchBar';
@@ -85,13 +86,13 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Left: Greeting & Location + Undo / Redo buttons */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div
+            <img
+              src={logoImg}
+              alt="AgriSmart Logo"
               data-voice-text={profile.name}
               onClick={() => speak(`${profile.name}, ${profile.location}`)}
-              className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl shrink-0 shadow-xs cursor-pointer"
-            >
-              🌱
-            </div>
+              className="h-10 w-auto max-w-[120px] object-contain shrink-0 cursor-pointer select-none"
+            />
             <div>
               <h1
                 data-voice-text={getGreeting()}
