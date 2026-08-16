@@ -799,7 +799,7 @@ export const MOCK_DISEASES: CropDisease[] = [
     scientificName: 'Alternaria solani',
     severityPercent: 58,
     confidencePercent: 94,
-    imageUrl: 'https://images.unsplash.com/photo-1628350565515-801269030119?auto=format&fit=crop&w=600&q=80',
+    imageUrl: '/images/tamato_plant.jpg',
     symptoms: [
       'Target-board concentric dark rings on lower leaves first.',
       'Leaf yellowing surrounding lesions causing leaf drop.'
