@@ -239,17 +239,27 @@ export const NutriBlendView: React.FC = () => {
     <div id="nutriblend-view-root" className="space-y-6 max-w-6xl mx-auto pb-24 md:pb-12 text-[#26332A] font-sans">
       
       {/* 1. TOP TITLE BANNER CARD */}
-      <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs relative overflow-hidden">
+      <div
+        className="rounded-3xl p-6 shadow-md relative overflow-hidden border border-emerald-900/20"
+        style={{
+          backgroundImage: `url('/images/nutriblend_banner.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        {/* Dark gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/85 via-emerald-900/70 to-teal-800/40 rounded-3xl" />
+
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-1.5 text-emerald-800 text-xs font-bold uppercase tracking-wider">
-              <Scale className="w-4 h-4 text-emerald-600 animate-pulse" />
+            <div className="inline-flex items-center gap-1.5 text-emerald-300 text-xs font-bold uppercase tracking-wider">
+              <Scale className="w-4 h-4 text-emerald-400 animate-pulse" />
               <span>NUTRIBLEND™ • SMART CROP NUTRITION PLAN</span>
             </div>
-            <h2 className="text-3xl font-black tracking-tight text-slate-900 leading-tight">
+            <h2 className="text-3xl font-black tracking-tight text-white leading-tight drop-shadow-md">
               Crop Nutrition Plan
             </h2>
-            <p className="text-sm text-slate-505 font-medium leading-relaxed">
+            <p className="text-sm text-emerald-100/90 font-medium leading-relaxed">
               What to give your crop, how much to apply, and the exact best time.
             </p>
           </div>
@@ -258,15 +268,15 @@ export const NutriBlendView: React.FC = () => {
             <button 
               type="button"
               onClick={handleVoiceAsk}
-              className="px-4 py-2.5 bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+              className="px-4 py-2.5 bg-amber-400/20 text-amber-200 hover:bg-amber-400/30 border border-amber-300/40 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer backdrop-blur-sm"
             >
-              <Mic className="w-4 h-4 text-amber-500" />
+              <Mic className="w-4 h-4 text-amber-300" />
               <span>Voice Ask</span>
             </button>
             <button 
               type="button"
               onClick={handleReadAloud}
-              className="px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs"
+              className="px-4 py-2.5 bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs backdrop-blur-sm"
             >
               <Volume2 className="w-4 h-4" />
               <span>Read Aloud (सुनें)</span>
@@ -274,6 +284,7 @@ export const NutriBlendView: React.FC = () => {
           </div>
         </div>
       </div>
+
 
       {/* 2. DYNAMIC INPUT SELECTORS BAR */}
       <div className="bg-white border border-slate-200/85 rounded-3xl p-5 shadow-xs space-y-4">
