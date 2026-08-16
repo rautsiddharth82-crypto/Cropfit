@@ -1,4 +1,5 @@
 import React from 'react';
+import logoImg from '../Images/logo.jpeg';
 import { AppTab, FarmerProfile } from '../types';
 import { Home, Sprout, CloudSun, Bot, BookOpen, FlaskConical, Camera, Landmark, Sliders, Wallet, LogOut, Volume2, VolumeX, Scale } from 'lucide-react';
 import { useLanguage } from '../i18n/translations';
@@ -50,20 +51,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
     >
       {/* Brand Header */}
       <div className="p-5 flex items-center justify-between border-b border-slate-100">
-        <div className="flex items-center gap-3">
-          <div
+        <div className="flex items-center gap-2">
+          <img
+            src={logoImg}
+            alt="AgriSmart Logo"
             data-voice-text="एग्रीस्मार्ट कृषि ऐप"
             onClick={() => speak('AgriSmart AI')}
-            className="w-10 h-10 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-2xl flex items-center justify-center text-white text-xl shadow-md shadow-emerald-500/20 cursor-pointer"
-          >
-            🌱
-          </div>
-          <div>
-            <h1 className="font-black text-xl tracking-tight text-slate-900">AgriSmart</h1>
-            <p className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest">
-              {t('nav_ai')}
-            </p>
-          </div>
+            className="h-10 w-auto max-w-[140px] object-contain cursor-pointer select-none"
+          />
         </div>
 
         {/* Voice Toggle Button */}
