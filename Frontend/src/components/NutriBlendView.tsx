@@ -242,13 +242,13 @@ export const NutriBlendView: React.FC = () => {
       <div
         className="rounded-3xl p-6 shadow-md relative overflow-hidden border border-emerald-900/20"
         style={{
-          backgroundImage: `url('/images/nutriblend_banner.jpg')`,
+          backgroundImage: `url('/images/nutriblend_bg.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
         {/* Dark gradient overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/85 via-emerald-900/70 to-teal-800/40 rounded-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/60 via-slate-800/30 to-transparent rounded-3xl" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
